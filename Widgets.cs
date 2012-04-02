@@ -1,4 +1,5 @@
 using Gtk;
+using System;
 // Todo: How to track snotes. snotes tracked in parent?
 class TNS : HBox
 {
@@ -44,6 +45,8 @@ class TNS : HBox
         }
     }
 }
+
+// Change to buttons?
 class SNote : VBox
 {
     Label title,
@@ -62,8 +65,6 @@ class SNote : VBox
         Add(comment);
         Add(date);
         Add(prio);
-
-        ShowAll();
     }
 
     public void updateInfo(string title, string comment, string date, string prio)
@@ -72,5 +73,47 @@ class SNote : VBox
         this.comment.Text = comment;
         this.date.Text = date;
         this.prio.Text = prio;
+    }
+}
+
+// SNote Adder.
+class SNA : HBox
+{
+    VBox vboxL,
+         vboxR;
+    Label lblTitle,
+          lblComment,
+          lblDate,
+          lblPrio;
+    Entry entTitle,
+          entComment,
+          entDate,
+          entPrio;
+
+    public SNA() : base()
+    {
+        vboxL = new VBox();
+        vboxR = new VBox();
+        lblTitle = new Label("Title");
+        lblComment = new Label("Comment");
+        lblDate = new Label("Date");
+        lblPrio = new Label("Prio");
+        entTitle = new Entry();
+        entComment = new Entry();
+        entDate = new Entry();
+        entPrio = new Entry();
+
+        vboxL.Add(lblTitle);
+        vboxL.Add(lblComment);
+        vboxL.Add(lblDate);
+        vboxL.Add(lblPrio);
+
+        vboxR.Add(entTitle);
+        vboxR.Add(entComment);
+        vboxR.Add(entDate);
+        vboxR.Add(entPrio);
+
+        Add(vboxL);
+        Add(vboxR);
     }
 }
