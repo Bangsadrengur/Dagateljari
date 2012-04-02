@@ -8,6 +8,8 @@ class Vidmot : Window
     // snote is an array of SNotes.
     // snCount is the next empty slot
     // in snote.
+    // messagePass is for holding a referance
+    // to snote that is being changed.
     SNote[] snote;
     int snCount;
     VBox total;
@@ -17,7 +19,9 @@ class Vidmot : Window
     Button btnTnsL,
            btnSnaL,
            btnTnsR,
-           btnSnaR;
+           btnSnaR,
+           btnSnaChangeL;
+    SNote messagePass;
 
     public Vidmot() : base("Dagateljari")
     {
@@ -29,9 +33,11 @@ class Vidmot : Window
         btnSnaL = new Button("Save & Close");
         btnTnsR = new Button("Close");
         btnSnaR = new Button("Cancel & Return");
+        btnSnaChangeL = new Button("Save & Close");
         // Bound to 100 SNotes.
         snote = new SNote[100];
         snCount = 0;
+        messagePass = new SNote(this);
 
         hbButtons.Add(btnTnsL);
         hbButtons.Add(btnTnsR);
@@ -42,10 +48,9 @@ class Vidmot : Window
         };
 
         btnSnaR.Clicked += onBtnSnaRClicked;
-
         btnTnsL.Clicked += onBtnTnsClicked;
-
         btnSnaL.Clicked += onBtnSnaLClicked;
+        btnSnaChangeL.Clicked += onBtnSnaCLClicked;
 
         DeleteEvent += delegate
         {
@@ -57,6 +62,46 @@ class Vidmot : Window
 
         Add(total);
 
+        ShowAll();
+    }
+
+    public void changeSNote(SNote snote)
+    {
+        total.Remove(tns);
+        total.Remove(hbButtons);
+        total.PackStart(sna, true, true, 0);
+        total.PackStart(hbButtons, false, false, 10);
+        hbButtons.Remove(btnTnsL);
+        hbButtons.Remove(btnTnsR);
+        hbButtons.Add(btnSnaChangeL);
+        hbButtons.Add(btnSnaR);
+        ShowAll();
+
+        string[] info = snote.getInfo();
+        sna.setTitle(info[0]);
+        sna.setComment(info[1]);
+        sna.setDate(info[2]);
+        sna.setPrio(info[3]);
+        this.messagePass = snote;
+    }
+
+    private void onBtnSnaCLClicked(
+            object source,
+            EventArgs args)
+    {
+        this.messagePass.updateInfo(
+                sna.getTitle(),
+                sna.getComment(),
+                sna.getDate(),
+                sna.getPrio());
+        total.Remove(sna);
+        total.Remove(hbButtons);
+        total.PackStart(tns, true, true, 0);
+        total.PackStart(hbButtons, false, false, 10);
+        hbButtons.Remove(btnSnaChangeL);
+        hbButtons.Remove(btnSnaR);
+        hbButtons.Add(btnTnsL);
+        hbButtons.Add(btnTnsR);
         ShowAll();
     }
 
@@ -72,6 +117,10 @@ class Vidmot : Window
         hbButtons.Remove(btnTnsR);
         hbButtons.Add(btnSnaL);
         hbButtons.Add(btnSnaR);
+        sna.setTitle("");
+        sna.setComment("");
+        sna.setDate("");
+        sna.setPrio("");
         ShowAll();
     }
 
@@ -82,7 +131,7 @@ class Vidmot : Window
         // Demand title for each SNote.
         if(sna.getTitle() != "") 
         {
-        snote[snCount] = new SNote();
+        snote[snCount] = new SNote(this);
         snote[snCount] = createSNote(); 
         // Stuck at adding to todo.
         tns.addSNote(snote[snCount++], 0);
@@ -115,7 +164,7 @@ class Vidmot : Window
 
     private SNote createSNote()
     {
-        SNote snote = new SNote();
+        SNote snote = new SNote(this);
         snote.updateInfo(
                 sna.getTitle(),
                 sna.getComment(),

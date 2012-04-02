@@ -47,25 +47,38 @@ class TNS : HBox
 }
 
 // Change to buttons?
-class SNote : VBox
+class SNote : Button
 {
+    VBox vbox;
     Label title,
           comment,
           date,
           prio;
+    Vidmot parent;
 
-    public SNote() : base()
+    public SNote(Vidmot parent) : base()
     {
+        vbox = new VBox();
         title = new Label();
         comment = new Label();
         date = new Label();
         prio = new Label();
+        this.parent = parent;
 
-        Add(title);
-        Add(comment);
-        Add(date);
-        Add(prio);
+        vbox.Add(title);
+        vbox.Add(comment);
+        vbox.Add(date);
+        vbox.Add(prio);
+
+        Clicked += delegate
+        {
+            Console.WriteLine(this.title.Text);
+            parent.changeSNote(this);
+        };
+
+        Add(vbox);
     }
+
 
     public void updateInfo(string title, string comment, string date, string prio)
     {
@@ -73,6 +86,16 @@ class SNote : VBox
         this.comment.Text = comment;
         this.date.Text = date;
         this.prio.Text = prio;
+    }
+
+    public string[] getInfo()
+    {
+        string[] info = new string[4];
+        info[0] = title.Text;
+        info[1] = comment.Text;
+        info[2] = date.Text;
+        info[3] = prio.Text;
+        return info;
     }
 }
 
@@ -135,5 +158,25 @@ class SNA : HBox
     public string getPrio()
     {
         return entPrio.Text;
+    }
+
+    public void setTitle(string title)
+    {
+        entTitle.Text = title;
+    }
+
+    public void setComment(string comment)
+    {
+        entComment.Text = comment;
+    }
+
+    public void setDate(string date)
+    {
+        entDate.Text = date;
+    }
+
+    public void setPrio(string prio)
+    {
+        entPrio.Text = prio;
     }
 }
