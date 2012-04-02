@@ -4,72 +4,64 @@ using System;
 class Vidmot : Window
 {
     // TNS (Three Note State) is a view.
-    SNote snote1,
-          snote2,
-          snote3,
-          snote4;
+    // SNA (Sticky Note Adder) is a view.
+    // snote is an array of SNotes.
+    // snCount is the next empty slot
+    // in snote.
+    SNote[] snote;
+    int snCount;
     VBox total;
     HBox hbButtons;
     TNS tns;
     SNA sna;
     Button btnTnsL,
            btnSnaL,
-           btnR;
+           btnTnsR,
+           btnSnaR;
 
     public Vidmot() : base("Dagateljari")
     {
-        snote1 = new SNote();
-        snote2 = new SNote();
-        snote3 = new SNote();
-        snote4 = new SNote();
         total = new VBox();
         tns = new TNS();
         sna = new SNA();
         hbButtons = new HBox();
         btnTnsL = new Button("New note");
         btnSnaL = new Button("Save & Close");
-        btnR = new Button("Close");
+        btnTnsR = new Button("Close");
+        btnSnaR = new Button("Cancel & Return");
+        // Bound to 100 SNotes.
+        snote = new SNote[100];
+        snCount = 0;
 
         hbButtons.Add(btnTnsL);
-        hbButtons.Add(btnR);
+        hbButtons.Add(btnTnsR);
 
-        btnR.Clicked += delegate
+        btnTnsR.Clicked += delegate
         {
             Application.Quit();
         };
 
+        btnSnaR.Clicked += onBtnSnaRClicked;
+
         btnTnsL.Clicked += onBtnTnsClicked;
 
-        btnSnaL.Clicked += onBtnSnaClicked;
+        btnSnaL.Clicked += onBtnSnaLClicked;
 
         DeleteEvent += delegate
         {
             Application.Quit();
         };
 
-        tns.addSNote(snote1, 0);
-        tns.addSNote(snote2, 1);
-        tns.addSNote(snote3, 2);
-        tns.addSNote(snote4, 2);
-
         total.PackStart(tns, true, true, 0);
         total.PackStart(hbButtons, false, false, 10);
-
-        snote1.updateInfo("title1", "comment", 
-                "date", "prio");
-        snote2.updateInfo("title2", "comment", 
-                "date", "prio");
-        snote3.updateInfo("title3", "comment", 
-                "date", "prio");
-        snote4.updateInfo("title4", "comment", 
-                "date", "prio");
 
         Add(total);
 
         ShowAll();
     }
 
-    private void onBtnTnsClicked(object source,
+    private void onBtnTnsClicked(
+            object source,
             EventArgs args)
     {
         total.Remove(tns);
@@ -77,13 +69,37 @@ class Vidmot : Window
         total.PackStart(sna, true, true, 0);
         total.PackStart(hbButtons, false, false, 10);
         hbButtons.Remove(btnTnsL);
-        hbButtons.Remove(btnR);
+        hbButtons.Remove(btnTnsR);
         hbButtons.Add(btnSnaL);
-        hbButtons.Add(btnR);
+        hbButtons.Add(btnSnaR);
         ShowAll();
     }
 
-    private void onBtnSnaClicked(object source,
+    private void onBtnSnaLClicked(
+            object source,
+            EventArgs args)
+    {
+        // Demand title for each SNote.
+        if(sna.getTitle() != "") 
+        {
+        snote[snCount] = new SNote();
+        snote[snCount] = createSNote(); 
+        // Stuck at adding to todo.
+        tns.addSNote(snote[snCount++], 0);
+        }
+        total.Remove(sna);
+        total.Remove(hbButtons);
+        total.PackStart(tns, true, true, 0);
+        total.PackStart(hbButtons, false, false, 10);
+        hbButtons.Remove(btnSnaL);
+        hbButtons.Remove(btnSnaR);
+        hbButtons.Add(btnTnsL);
+        hbButtons.Add(btnTnsR);
+        ShowAll();
+    }
+
+    private void onBtnSnaRClicked(
+            object source,
             EventArgs args)
     {
         total.Remove(sna);
@@ -91,10 +107,21 @@ class Vidmot : Window
         total.PackStart(tns, true, true, 0);
         total.PackStart(hbButtons, false, false, 10);
         hbButtons.Remove(btnSnaL);
-        hbButtons.Remove(btnR);
+        hbButtons.Remove(btnSnaR);
         hbButtons.Add(btnTnsL);
-        hbButtons.Add(btnR);
+        hbButtons.Add(btnTnsR);
         ShowAll();
+    }
+
+    private SNote createSNote()
+    {
+        SNote snote = new SNote();
+        snote.updateInfo(
+                sna.getTitle(),
+                sna.getComment(),
+                sna.getDate(),
+                sna.getPrio());
+        return snote;
     }
 
     public static void Main()

@@ -116,4 +116,24 @@ class SNA : HBox
         Add(vboxL);
         Add(vboxR);
     }
+
+    public string getTitle()
+    {
+        return entTitle.Text;
+    }
+
+    public string getComment()
+    {
+        return entComment.Text;
+    }
+
+    public string getDate()
+    {
+        return entDate.Text;
+    }
+
+    public string getPrio()
+    {
+        return entPrio.Text;
+    }
 }
