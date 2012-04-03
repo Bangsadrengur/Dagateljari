@@ -65,6 +65,7 @@ class Vidmot : Window
 
         Add(total);
 
+        SetDefaultSize(300,400);
         ShowAll();
     }
 
