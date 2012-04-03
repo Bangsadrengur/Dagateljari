@@ -1,8 +1,18 @@
+// A collection of widgets for Vidmot.cs
+// Author: Heimir Þór Kjartansson.
+
 using Gtk;
 using System;
-// Todo: How to track snotes. snotes tracked in parent?
+
+// TNS is a three note state widget. It's for displaying
+// SNotes in three possible states: todo, doing, done. 
+// The seperation between states is achieved by using
+// three columns, one for each state.
 class TNS : HBox
 {
+    // Data invariant:
+    // * VBox items are columns for states.
+    // * Labels for the top of each column.
     VBox todo,
          doing,
          done;
@@ -29,6 +39,8 @@ class TNS : HBox
     }
 
     // state is !(1||2) for todo, 1 doing 2 done.
+    // After: snote has been added to TNS in column
+    // according to state.
     public void addSNote(SNote snote, int state)
     {
         switch(state)
@@ -45,6 +57,8 @@ class TNS : HBox
         }
     }
 
+    // After: snote has been removed from column defined
+    // by snote.getStatus().
     public void removeSNote(SNote snote)
     {
         switch(snote.getStatus())
@@ -62,6 +76,10 @@ class TNS : HBox
     }
 }
 
+// SNote is a sticky note for containing assignements.
+// SNote stores 6 details about note, title, comment, date
+// and priority in string form and state (todo, doing done) in
+// ,coded' integer form.
 class SNote : Button
 {
     VBox vbox;
@@ -93,6 +111,7 @@ class SNote : Button
         Add(vbox);
     }
 
+    // After: SNote has had it's details updates.
     public void updateInfo(
             string title, 
             string comment, 
@@ -107,6 +126,9 @@ class SNote : Button
         this.status = status;
     }
 
+    // Usage: string[] = SNote.getINfo();
+    // After: string contains SNote's string-
+    //        stored info.
     public string[] getInfo()
     {
         string[] info = new string[4];
@@ -117,20 +139,26 @@ class SNote : Button
         return info;
     }
 
+    // Set status of SNote.
     public void setStatus(int status)
     {
         this.status = status;
     }
 
+    // Get status of SNote.
     public int getStatus()
     {
         return status;
     }
 }
 
-// SNote Adder.
+// SNA is a sticky note adder widget. It's for displaying
+// info fields for SNote creation or modifying.
 class SNA : HBox
 {
+    // Labels and entry boxes for SNote title, 
+    // comment, date and priority.
+    // Radiobuttons for status.
     VBox vboxL,
          vboxR;
     Label lblTitle,
@@ -191,6 +219,7 @@ class SNA : HBox
         Add(vboxR);
     }
 
+    // Get status from radio buttons.
     public int getStatus()
     {
         if(rbDoing.Active) return 1;
@@ -198,6 +227,7 @@ class SNA : HBox
         return 0;
     }
 
+    // Set radio buttons status.
     public void setStatus(int status)
     {
         switch(status)
@@ -214,41 +244,49 @@ class SNA : HBox
         }
     }
 
+    // Get title from entry field.
     public string getTitle()
     {
         return entTitle.Text;
     }
 
+    // Get comment from entry field.
     public string getComment()
     {
         return entComment.Text;
     }
 
+    // Get date from entry field.
     public string getDate()
     {
         return entDate.Text;
     }
 
+    // Get priority from entry field.
     public string getPrio()
     {
         return entPrio.Text;
     }
 
+    // Set title field.
     public void setTitle(string title)
     {
         entTitle.Text = title;
     }
 
+    // Set comment field.
     public void setComment(string comment)
     {
         entComment.Text = comment;
     }
 
+    // Set date field.
     public void setDate(string date)
     {
         entDate.Text = date;
     }
 
+    // Set priority field.
     public void setPrio(string prio)
     {
         entPrio.Text = prio;
