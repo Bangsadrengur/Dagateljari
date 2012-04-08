@@ -81,7 +81,6 @@ class Vidmot : Window
             object source,
             EventArgs args)
     {
-        // Set btnL to TNS.
         // Demand title for each SNote.
         if(sna.getTitle() != "") 
         {
@@ -90,6 +89,10 @@ class Vidmot : Window
         // Stuck at adding to todo.
         tns.addSNote(snote[snCount++], sna.getStatus());
         }
+        btnL.Clicked -= onBtnSnaLClicked;
+        btnR.Clicked -= onBtnSnaRClicked;
+        btnL.Clicked += onBtnTnsLClicked;
+        btnR.Clicked += onBtnTnsRClicked;
         updateView(tns, sna);
         ShowAll();
     }
@@ -98,17 +101,18 @@ class Vidmot : Window
             object source,
             EventArgs args)
     {
-        // Set btns to TNS.
+        btnL.Clicked -= onBtnSnaLClicked;
+        btnR.Clicked -= onBtnSnaRClicked;
+        btnL.Clicked += onBtnTnsLClicked;
+        btnR.Clicked += onBtnTnsRClicked;
         updateView(tns, sna);
         ShowAll();
     }
 
-    // Updated
     private void onBtnSnaCLClicked(
             object source,
             EventArgs args)
     {
-        // Set new function for btnL
         if(sna.getStatus() != messagePass.getStatus())
         {
            tns.removeSNote(messagePass); 
@@ -130,6 +134,10 @@ class Vidmot : Window
                 sna.getPrio(),
                 sna.getStatus());
         }
+        btnL.Clicked -= onBtnSnaCLClicked;
+        btnR.Clicked -= onBtnSnaCRClicked;
+        btnL.Clicked += onBtnTnsLClicked;
+        btnR.Clicked += onBtnTnsRClicked;
         updateView(tns, sna);
         ShowAll();
     }
@@ -138,7 +146,10 @@ class Vidmot : Window
             object source,
             EventArgs args)
     {
-        // Change view to TNS
+        btnL.Clicked -= onBtnSnaCLClicked;
+        btnR.Clicked -= onBtnSnaCRClicked;
+        btnL.Clicked += onBtnTnsLClicked;
+        btnR.Clicked += onBtnTnsRClicked;
         updateView(tns, sna);
         ShowAll();
     }
@@ -158,7 +169,10 @@ class Vidmot : Window
 
     public void changeSNote(SNote snote)
     {
-        // Set view to SNA
+        btnL.Clicked -= onBtnTnsLClicked;
+        btnR.Clicked -= onBtnTnsRClicked;
+        btnL.Clicked += onBtnSnaCLClicked;
+        btnR.Clicked += onBtnSnaCRClicked;
         updateView(sna, tns);
         ShowAll();
 
