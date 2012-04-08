@@ -58,8 +58,7 @@ class Vidmot : Window
             EventArgs args)
     {
         // Set new function for btnL
-        total.Remove(tns);
-        total.PackEnd(sna, true, true, 0);
+        updateView(sna, tns);
         sna.setTitle("");
         sna.setComment("");
         sna.setDate("");
@@ -87,8 +86,7 @@ class Vidmot : Window
         // Stuck at adding to todo.
         tns.addSNote(snote[snCount++], sna.getStatus());
         }
-        total.Remove(sna);
-        total.PackStart(tns, true, true, 0);
+        updateView(tns, sna);
         ShowAll();
     }
 
@@ -97,8 +95,7 @@ class Vidmot : Window
             EventArgs args)
     {
         // Set btns to TNS.
-        total.Remove(sna);
-        total.PackStart(tns, true, true, 0);
+        updateView(tns, sna);
         ShowAll();
     }
 
@@ -129,8 +126,7 @@ class Vidmot : Window
                 sna.getPrio(),
                 sna.getStatus());
         }
-        total.Remove(sna);
-        total.PackStart(tns, true, true, 0);
+        updateView(tns, sna);
         ShowAll();
     }
 
@@ -139,8 +135,7 @@ class Vidmot : Window
             EventArgs args)
     {
         // Change view to TNS
-        total.Remove(sna);
-        total.PackStart(tns, true, true, 0);
+        updateView(tns, sna);
         ShowAll();
     }
 
@@ -160,8 +155,7 @@ class Vidmot : Window
     public void changeSNote(SNote snote)
     {
         // Set view to SNA
-        total.Remove(tns);
-        total.PackStart(sna, true, true, 0);
+        updateView(sna, tns);
         ShowAll();
 
         string[] info = snote.getInfo();
@@ -171,6 +165,14 @@ class Vidmot : Window
         sna.setPrio(info[3]);
         sna.setStatus(snote.getStatus());
         this.messagePass = snote;
+    }
+
+    private void updateView(HBox newView, HBox oldView)
+    {
+        total.Remove(oldView);
+        total.Remove(hbButtons);
+        total.PackStart(newView, true, true, 0);
+        total.PackStart(hbButtons, false, false, 0);
     }
 
     public static void Main()
