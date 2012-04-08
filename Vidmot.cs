@@ -58,6 +58,10 @@ class Vidmot : Window
             EventArgs args)
     {
         // Set new function for btnL
+        btnL.Clicked -= onBtnTnsLClicked;
+        btnR.Clicked -= onBtnTnsRClicked;
+        btnL.Clicked += onBtnSnaLClicked;
+        btnR.Clicked += onBtnSnaRClicked;
         updateView(sna, tns);
         sna.setTitle("");
         sna.setComment("");
