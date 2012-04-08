@@ -167,6 +167,14 @@ class Vidmot : Window
         return snote;
     }
 
+    private void updateView(HBox newView, HBox oldView)
+    {
+        total.Remove(oldView);
+        total.Remove(hbButtons);
+        total.PackStart(newView, true, true, 0);
+        total.PackStart(hbButtons, false, false, 0);
+    }
+
     public void changeSNote(SNote snote)
     {
         btnL.Clicked -= onBtnTnsLClicked;
@@ -183,14 +191,6 @@ class Vidmot : Window
         sna.setPrio(info[3]);
         sna.setStatus(snote.getStatus());
         this.messagePass = snote;
-    }
-
-    private void updateView(HBox newView, HBox oldView)
-    {
-        total.Remove(oldView);
-        total.Remove(hbButtons);
-        total.PackStart(newView, true, true, 0);
-        total.PackStart(hbButtons, false, false, 0);
     }
 
     public static void Main()
