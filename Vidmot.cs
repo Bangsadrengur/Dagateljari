@@ -27,12 +27,8 @@ class Vidmot : Window
     HBox hbButtons;
     TNS tns;
     SNA sna;
-    Button btnTnsL,
-           btnSnaL,
-           btnTnsR,
-           btnSnaR,
-           btnSnaChangeL,
-           btnSnaChangeR;
+    Button btnL,
+           btnR;
     SNote messagePass;
 
     // Window constructor.
@@ -42,30 +38,18 @@ class Vidmot : Window
         tns = new TNS();
         sna = new SNA();
         hbButtons = new HBox();
-        btnTnsL = new Button("New note");
-        btnSnaL = new Button("Save & Close");
-        btnTnsR = new Button("Close");
-        btnSnaR = new Button("Cancel & Return");
-        btnSnaChangeL = new Button("Save & Close");
-        btnSnaChangeR = new Button("Cancel & Return");
+        btnL = new Button("Left");
+        btnR = new Button("Right");
         // Bound to 100 SNotes.
         snote = new SNote[100];
         snCount = 0;
         messagePass = new SNote(this);
 
-        hbButtons.Add(btnTnsL);
-        hbButtons.Add(btnTnsR);
+        hbButtons.Add(btnL);
+        hbButtons.Add(btnR);
 
-        btnTnsR.Clicked += delegate
-        {
-            Application.Quit();
-        };
-
-        btnSnaR.Clicked += onBtnSnaRClicked;
-        btnTnsL.Clicked += onBtnTnsClicked;
-        btnSnaL.Clicked += onBtnSnaLClicked;
-        btnSnaChangeL.Clicked += onBtnSnaCLClicked;
-        btnSnaChangeR.Clicked += onBtnSnaCRClicked;
+        btnL.Clicked += onBtnTnsLClicked;
+        btnR.Clicked += onBtnTnsRClicked;
 
         DeleteEvent += delegate
         {
@@ -82,29 +66,60 @@ class Vidmot : Window
         ShowAll();
     }
 
-    // Usage:  Vidmot.changeSNote(snote);
-    // Before: View is TNS, snote exists.
-    // After:  View is SNA where fields
-    //         are set to snote values.
-    public void changeSNote(SNote snote)
+    private void onBtnTnsLClicked(
+            object source,
+            EventArgs args)
     {
-        total.Remove(tns);
-        total.Remove(hbButtons);
-        total.PackStart(sna, true, true, 0);
-        total.PackStart(hbButtons, false, false, 10);
-        hbButtons.Remove(btnTnsL);
-        hbButtons.Remove(btnTnsR);
-        hbButtons.Add(btnSnaChangeL);
-        hbButtons.Add(btnSnaChangeR);
+        // Set new function for btnL
+        btnL.Clicked -= onBtnTnsLClicked;
+        btnR.Clicked -= onBtnTnsRClicked;
+        btnL.Clicked += onBtnSnaLClicked;
+        btnR.Clicked += onBtnSnaRClicked;
+        updateView(sna, tns);
+        sna.setTitle("");
+        sna.setComment("");
+        sna.setDate("");
+        sna.setPrio("");
         ShowAll();
+    }
 
-        string[] info = snote.getInfo();
-        sna.setTitle(info[0]);
-        sna.setComment(info[1]);
-        sna.setDate(info[2]);
-        sna.setPrio(info[3]);
-        sna.setStatus(snote.getStatus());
-        this.messagePass = snote;
+    private void onBtnTnsRClicked(
+            object source,
+            EventArgs args)
+    {
+        Application.Quit();
+    }
+
+    private void onBtnSnaLClicked(
+            object source,
+            EventArgs args)
+    {
+        // Demand title for each SNote.
+        if(sna.getTitle() != "") 
+        {
+        snote[snCount] = new SNote(this);
+        snote[snCount] = createSNote(); 
+        // Stuck at adding to todo.
+        tns.addSNote(snote[snCount++], sna.getStatus());
+        }
+        btnL.Clicked -= onBtnSnaLClicked;
+        btnR.Clicked -= onBtnSnaRClicked;
+        btnL.Clicked += onBtnTnsLClicked;
+        btnR.Clicked += onBtnTnsRClicked;
+        updateView(tns, sna);
+        ShowAll();
+    }
+
+    private void onBtnSnaRClicked(
+            object source,
+            EventArgs args)
+    {
+        btnL.Clicked -= onBtnSnaLClicked;
+        btnR.Clicked -= onBtnSnaRClicked;
+        btnL.Clicked += onBtnTnsLClicked;
+        btnR.Clicked += onBtnTnsRClicked;
+        updateView(tns, sna);
+        ShowAll();
     }
 
     // Before: View is SNA in change mode. 
@@ -138,62 +153,11 @@ class Vidmot : Window
                 sna.getPrio(),
                 sna.getStatus());
         }
-        total.Remove(sna);
-        total.Remove(hbButtons);
-        total.PackStart(tns, true, true, 0);
-        total.PackStart(hbButtons, false, false, 10);
-        hbButtons.Remove(btnSnaChangeL);
-        hbButtons.Remove(btnSnaChangeR);
-        hbButtons.Add(btnTnsL);
-        hbButtons.Add(btnTnsR);
-        ShowAll();
-    }
-
-    // Before: View is TNS.
-    // After:  View is SNA.
-    private void onBtnTnsClicked(
-            object source,
-            EventArgs args)
-    {
-        total.Remove(tns);
-        total.Remove(hbButtons);
-        total.PackStart(sna, true, true, 0);
-        total.PackStart(hbButtons, false, false, 10);
-        hbButtons.Remove(btnTnsL);
-        hbButtons.Remove(btnTnsR);
-        hbButtons.Add(btnSnaL);
-        hbButtons.Add(btnSnaR);
-        sna.setTitle("");
-        sna.setComment("");
-        sna.setDate("");
-        sna.setPrio("");
-        ShowAll();
-    }
-
-    // Before: View is SNA.
-    // After:  View is TNS. A new SNote
-    //         exists with values from SNA
-    //         fields if the title field was
-    //         not empty.
-    private void onBtnSnaLClicked(
-            object source,
-            EventArgs args)
-    {
-        // Demand title for each SNote.
-        if(sna.getTitle() != "") 
-        {
-        snote[snCount] = new SNote(this);
-        snote[snCount] = createSNote(); 
-        tns.addSNote(snote[snCount++], sna.getStatus());
-        }
-        total.Remove(sna);
-        total.Remove(hbButtons);
-        total.PackStart(tns, true, true, 0);
-        total.PackStart(hbButtons, false, false, 10);
-        hbButtons.Remove(btnSnaL);
-        hbButtons.Remove(btnSnaR);
-        hbButtons.Add(btnTnsL);
-        hbButtons.Add(btnTnsR);
+        btnL.Clicked -= onBtnSnaCLClicked;
+        btnR.Clicked -= onBtnSnaCRClicked;
+        btnL.Clicked += onBtnTnsLClicked;
+        btnR.Clicked += onBtnTnsRClicked;
+        updateView(tns, sna);
         ShowAll();
     }
 
@@ -203,31 +167,11 @@ class Vidmot : Window
             object source,
             EventArgs args)
     {
-        total.Remove(sna);
-        total.Remove(hbButtons);
-        total.PackStart(tns, true, true, 0);
-        total.PackStart(hbButtons, false, false, 10);
-        hbButtons.Remove(btnSnaChangeL);
-        hbButtons.Remove(btnSnaChangeR);
-        hbButtons.Add(btnTnsL);
-        hbButtons.Add(btnTnsR);
-        ShowAll();
-    }
-
-    // Before: View is SNA.
-    // After:  View is TNS.
-    private void onBtnSnaRClicked(
-            object source,
-            EventArgs args)
-    {
-        total.Remove(sna);
-        total.Remove(hbButtons);
-        total.PackStart(tns, true, true, 0);
-        total.PackStart(hbButtons, false, false, 10);
-        hbButtons.Remove(btnSnaL);
-        hbButtons.Remove(btnSnaR);
-        hbButtons.Add(btnTnsL);
-        hbButtons.Add(btnTnsR);
+        btnL.Clicked -= onBtnSnaCLClicked;
+        btnR.Clicked -= onBtnSnaCRClicked;
+        btnL.Clicked += onBtnTnsLClicked;
+        btnR.Clicked += onBtnTnsRClicked;
+        updateView(tns, sna);
         ShowAll();
     }
 
@@ -245,6 +189,36 @@ class Vidmot : Window
                 sna.getPrio(),
                 sna.getStatus());
         return snote;
+    }
+
+    private void updateView(HBox newView, HBox oldView)
+    {
+        total.Remove(oldView);
+        total.Remove(hbButtons);
+        total.PackStart(newView, true, true, 0);
+        total.PackStart(hbButtons, false, false, 0);
+    }
+
+    // Usage:  Vidmot.changeSNote(snote);
+    // Before: View is TNS, snote exists.
+    // After:  View is SNA where fields
+    //         are set to snote values.
+    public void changeSNote(SNote snote)
+    {
+        btnL.Clicked -= onBtnTnsLClicked;
+        btnR.Clicked -= onBtnTnsRClicked;
+        btnL.Clicked += onBtnSnaCLClicked;
+        btnR.Clicked += onBtnSnaCRClicked;
+        updateView(sna, tns);
+        ShowAll();
+
+        string[] info = snote.getInfo();
+        sna.setTitle(info[0]);
+        sna.setComment(info[1]);
+        sna.setDate(info[2]);
+        sna.setPrio(info[3]);
+        sna.setStatus(snote.getStatus());
+        this.messagePass = snote;
     }
 
     // Start, build and run.
