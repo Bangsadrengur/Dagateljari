@@ -3,13 +3,24 @@ using System;
 
 class Vidmot : Window
 {
-    // TNS (Three Note State) is a view.
-    // SNA (Sticky Note Adder) is a view.
-    // snote is an array of SNotes.
-    // snCount is the next empty slot
-    // in snote.
-    // messagePass is for holding a referance
-    // to snote that is being changed.
+    // Data invariant:
+    // * TNS (Three Note State) is a view.
+    // * SNA (Sticky Note Adder) is a view.
+    //   SNA has a change mode where SNotes
+    //   aren't added but modified.
+    // * snote is an array of SNotes.
+    // * snCount is the next empty slot
+    //   in snote.
+    // * messagePass is for holding a referance
+    //   to snote that is being changed.
+    // * All buttons end with L for left position
+    //   or R for right position. Buttons are
+    //   packed to the bottom of the window,
+    //   two at a time.
+    // * btnTns* is a button for TNS view.
+    // * btnSna* is a button for SNA view.
+    // * btnSnaChange* is a button for 
+    //   SNA view in change mode.
     SNote[] snote;
     int snCount;
     VBox total;
@@ -20,6 +31,7 @@ class Vidmot : Window
            btnR;
     SNote messagePass;
 
+    // Window constructor.
     public Vidmot() : base("Dagateljari")
     {
         total = new VBox();
@@ -49,6 +61,7 @@ class Vidmot : Window
 
         Add(total);
 
+        // Set initial window size.
         SetDefaultSize(300,400);
         ShowAll();
     }
@@ -109,6 +122,12 @@ class Vidmot : Window
         ShowAll();
     }
 
+    // Before: View is SNA in change mode. 
+    //         messagePass is a non null SNote.
+    // After:  messagePass is has been updated
+    //         and placed in the appropriate
+    //         TNS column.
+    //         View is TNS.
     private void onBtnSnaCLClicked(
             object source,
             EventArgs args)
@@ -142,6 +161,8 @@ class Vidmot : Window
         ShowAll();
     }
 
+    // Before: View is SNA in change mode.
+    // After:  View is TNS.
     private void onBtnSnaCRClicked(
             object source,
             EventArgs args)
@@ -154,7 +175,10 @@ class Vidmot : Window
         ShowAll();
     }
 
-
+    // Usage:  snote = Vidmot.createSNote();
+    // Before: The view is SNA.
+    // After:  snote is a new SNote with values
+    //         from SNA fields.
     private SNote createSNote()
     {
         SNote snote = new SNote(this);
@@ -175,6 +199,10 @@ class Vidmot : Window
         total.PackStart(hbButtons, false, false, 0);
     }
 
+    // Usage:  Vidmot.changeSNote(snote);
+    // Before: View is TNS, snote exists.
+    // After:  View is SNA where fields
+    //         are set to snote values.
     public void changeSNote(SNote snote)
     {
         btnL.Clicked -= onBtnTnsLClicked;
@@ -193,6 +221,7 @@ class Vidmot : Window
         this.messagePass = snote;
     }
 
+    // Start, build and run.
     public static void Main()
     {
         Application.Init();
