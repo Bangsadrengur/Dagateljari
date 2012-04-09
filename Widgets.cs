@@ -38,7 +38,6 @@ class TNS : HBox
         Add(done);
 
         Homogeneous = true;
-        Console.WriteLine(Homogeneous);
     }
 
     // state is !(1||2) for todo, 1 doing 2 done.
