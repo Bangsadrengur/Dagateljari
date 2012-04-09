@@ -183,7 +183,7 @@ class SNA : HBox
     {
         vboxL = new VBox();
         vboxR = new VBox();
-        lblTitle = new Label("Title");
+        lblTitle = new Label("Title (required)");
         lblComment = new Label("Comment");
         lblDate = new Label("Date");
         lblPrio = new Label("Prio");

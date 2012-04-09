@@ -15,19 +15,28 @@ class Loader
         int n=0;
         while(n!=snCount)
         {
-            string[] info = snote[n].getInfo();
-            int status = snote[n].getStatus();
-            table[i.ToString()] = info[0];
-            i++;
-            table[i.ToString()] = info[1];
-            i++;
-            table[i.ToString()] = info[2];
-            i++;
-            table[i.ToString()] = info[3];
-            i++;
-            table[i.ToString()] = status;
-            i++;
-            n++;
+            if(snote[n].getInfo()[0] != "")
+            {
+                Console.WriteLine("Writing snote: " + n);
+                string[] info = snote[n].getInfo();
+                int status = snote[n].getStatus();
+                table[i.ToString()] = info[0];
+                i++;
+                table[i.ToString()] = info[1];
+                i++;
+                table[i.ToString()] = info[2];
+                i++;
+                table[i.ToString()] = info[3];
+                i++;
+                table[i.ToString()] = status;
+                i++;
+                n++;
+            }
+            else
+            {
+                Console.WriteLine("Skipping snote: " + n);
+                n++;
+            }
         }
         Value.SaveFile(table, filename);
     }

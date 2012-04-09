@@ -29,6 +29,9 @@ class Vidmot : Window
     SNA sna;
     Button btnL,
            btnR;
+    Button extraR;
+    Label extraL;
+    HBox extraBox;
     SNote messagePass;
 
     // Window constructor.
@@ -44,6 +47,10 @@ class Vidmot : Window
         snote = new SNote[100];
         snCount = 0;
         messagePass = new SNote(this);
+        // Delete function widgets.
+        extraR = new Button("Delete this note");
+        extraL = new Label("");
+        extraBox = new HBox();
 
         Loader.readSNotes(this);
         snote = Loader.getSNotes();
@@ -59,8 +66,13 @@ class Vidmot : Window
         hbButtons.Add(btnL);
         hbButtons.Add(btnR);
 
+        extraBox.Homogeneous = true;
+        extraBox.Add(extraL);
+        extraBox.Add(extraR);
+
         btnL.Clicked += onBtnTnsLClicked;
         btnR.Clicked += onBtnTnsRClicked;
+        extraR.Clicked += onBtnExtraRClicked;
 
         DeleteEvent += delegate
         {
@@ -89,7 +101,7 @@ class Vidmot : Window
         btnR.Clicked += onBtnSnaRClicked;
         btnL.Label = "Save & Return";
         btnR.Label = "Return";
-        updateView(sna, tns);
+        updateView(sna, tns, false);
         sna.setTitle("");
         sna.setComment("");
         sna.setDate("");
@@ -123,7 +135,7 @@ class Vidmot : Window
         btnR.Clicked += onBtnTnsRClicked;
         btnL.Label = "New Sticky Note";
         btnR.Label = "Close Application";
-        updateView(tns, sna);
+        updateView(tns, sna, false);
         ShowAll();
     }
 
@@ -137,7 +149,7 @@ class Vidmot : Window
         btnR.Clicked += onBtnTnsRClicked;
         btnL.Label = "New Sticky Note";
         btnR.Label = "Close Application";
-        updateView(tns, sna);
+        updateView(tns, sna, false);
         ShowAll();
     }
 
@@ -178,7 +190,7 @@ class Vidmot : Window
         btnR.Clicked += onBtnTnsRClicked;
         btnL.Label = "New Sticky Note";
         btnR.Label = "Close Application";
-        updateView(tns, sna);
+        updateView(tns, sna, true);
         ShowAll();
     }
 
@@ -194,7 +206,28 @@ class Vidmot : Window
         btnR.Clicked += onBtnTnsRClicked;
         btnL.Label = "New Sticky Note";
         btnR.Label = "Close Application";
-        updateView(tns, sna);
+        updateView(tns, sna, true);
+        ShowAll();
+    }
+
+    private void onBtnExtraRClicked(
+            object source,
+            EventArgs args)
+    {
+        tns.removeSNote(messagePass);
+        messagePass.updateInfo(
+                "",
+                "",
+                "",
+                "",
+                0);
+        updateView(tns, sna, true);
+        btnL.Clicked -= onBtnSnaCLClicked;
+        btnR.Clicked -= onBtnSnaCRClicked;
+        btnL.Clicked += onBtnTnsLClicked;
+        btnR.Clicked += onBtnTnsRClicked;
+        btnL.Label = "New Sticky Note";
+        btnR.Label = "Close Application";
         ShowAll();
     }
 
@@ -214,11 +247,13 @@ class Vidmot : Window
         return snote;
     }
 
-    private void updateView(HBox newView, HBox oldView)
+    private void updateView(HBox newView, HBox oldView, bool deleteButton)
     {
         total.Remove(oldView);
+        if(deleteButton && newView == tns) total.Remove(extraBox);
         total.Remove(hbButtons);
         total.PackStart(newView, true, true, 0);
+        if(deleteButton && newView == sna) total.PackStart(extraBox, false, false, 0);
         total.PackStart(hbButtons, false, false, 0);
     }
 
@@ -234,7 +269,7 @@ class Vidmot : Window
         btnR.Clicked += onBtnSnaCRClicked;
         btnL.Label = "Save & Return";
         btnR.Label = "Return";
-        updateView(sna, tns);
+        updateView(sna, tns, true);
         ShowAll();
 
         string[] info = snote.getInfo();
