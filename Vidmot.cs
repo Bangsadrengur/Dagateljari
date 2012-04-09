@@ -45,6 +45,16 @@ class Vidmot : Window
         snCount = 0;
         messagePass = new SNote(this);
 
+        Loader.readSNotes(this);
+        snote = Loader.getSNotes();
+        snCount = Loader.getSnCount();
+        int n=0;
+        while(snote[n] is SNote)
+        {
+            tns.addSNote(snote[n], snote[n].getStatus());
+            n++;
+        }
+
         hbButtons.Add(btnL);
         hbButtons.Add(btnR);
 
@@ -53,6 +63,7 @@ class Vidmot : Window
 
         DeleteEvent += delegate
         {
+            Loader.writeSNotes(snote, snCount);
             Application.Quit();
         };
 
@@ -87,6 +98,7 @@ class Vidmot : Window
             object source,
             EventArgs args)
     {
+        Loader.writeSNotes(snote, snCount);
         Application.Quit();
     }
 
