@@ -38,8 +38,8 @@ class Vidmot : Window
         tns = new TNS();
         sna = new SNA();
         hbButtons = new HBox();
-        btnL = new Button("Left");
-        btnR = new Button("Right");
+        btnL = new Button("New Sticky Note");
+        btnR = new Button("Close Application");
         // Bound to 100 SNotes.
         snote = new SNote[100];
         snCount = 0;
@@ -55,6 +55,7 @@ class Vidmot : Window
             n++;
         }
 
+        hbButtons.Homogeneous = true;
         hbButtons.Add(btnL);
         hbButtons.Add(btnR);
 
@@ -86,6 +87,8 @@ class Vidmot : Window
         btnR.Clicked -= onBtnTnsRClicked;
         btnL.Clicked += onBtnSnaLClicked;
         btnR.Clicked += onBtnSnaRClicked;
+        btnL.Label = "Save & Return";
+        btnR.Label = "Return";
         updateView(sna, tns);
         sna.setTitle("");
         sna.setComment("");
@@ -118,6 +121,8 @@ class Vidmot : Window
         btnR.Clicked -= onBtnSnaRClicked;
         btnL.Clicked += onBtnTnsLClicked;
         btnR.Clicked += onBtnTnsRClicked;
+        btnL.Label = "New Sticky Note";
+        btnR.Label = "Close Application";
         updateView(tns, sna);
         ShowAll();
     }
@@ -130,6 +135,8 @@ class Vidmot : Window
         btnR.Clicked -= onBtnSnaRClicked;
         btnL.Clicked += onBtnTnsLClicked;
         btnR.Clicked += onBtnTnsRClicked;
+        btnL.Label = "New Sticky Note";
+        btnR.Label = "Close Application";
         updateView(tns, sna);
         ShowAll();
     }
@@ -169,6 +176,8 @@ class Vidmot : Window
         btnR.Clicked -= onBtnSnaCRClicked;
         btnL.Clicked += onBtnTnsLClicked;
         btnR.Clicked += onBtnTnsRClicked;
+        btnL.Label = "New Sticky Note";
+        btnR.Label = "Close Application";
         updateView(tns, sna);
         ShowAll();
     }
@@ -183,6 +192,8 @@ class Vidmot : Window
         btnR.Clicked -= onBtnSnaCRClicked;
         btnL.Clicked += onBtnTnsLClicked;
         btnR.Clicked += onBtnTnsRClicked;
+        btnL.Label = "New Sticky Note";
+        btnR.Label = "Close Application";
         updateView(tns, sna);
         ShowAll();
     }
@@ -221,6 +232,8 @@ class Vidmot : Window
         btnR.Clicked -= onBtnTnsRClicked;
         btnL.Clicked += onBtnSnaCLClicked;
         btnR.Clicked += onBtnSnaCRClicked;
+        btnL.Label = "Save & Return";
+        btnR.Label = "Return";
         updateView(sna, tns);
         ShowAll();
 
