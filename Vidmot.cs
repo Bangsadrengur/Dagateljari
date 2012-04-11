@@ -2,25 +2,40 @@ using Gtk;
 using System;
 
 class Vidmot : Window
-{
+{    
     // Data invariant:
-    // * TNS (Three Note State) is a view.
-    // * SNA (Sticky Note Adder) is a view.
-    //   SNA has a change mode where SNotes
+    // * tns (Three Note State) is a view.
+    // * sna (Sticky Note Adder) is a view.
+    //   sna has a change mode where SNotes
     //   aren't added but modified.
     // * snote is an array of SNotes.
     // * snCount is the next empty slot
     //   in snote.
     // * messagePass is for holding a referance
     //   to snote that is being changed.
-    // * All buttons end with L for left position
-    //   or R for right position. Buttons are
-    //   packed to the bottom of the window,
-    //   two at a time.
-    // * btnTns* is a button for TNS view.
-    // * btnSna* is a button for SNA view.
-    // * btnSnaChange* is a button for 
-    //   SNA view in change mode.
+    // * btnL and btnR are buttons at a constant
+    //   place at the bottom of the window. 
+    // * btnL is usually connected to some 
+    //   active functionality (f.ex. new note, 
+    //   save & *).
+    // * btnR is usually connected to some
+    //   passive functionality such as
+    //   (f.ex. close application, return without 
+    //   change) 
+    // * extraR is a right position button, placed
+    //   above btnL and btnR. It is made visible 
+    //   when changing SNotes and is for deleting
+    //   the SNote currently inspected through
+    //   SNA view.
+    // * extraL is a left positioned label for
+    //   aligning extraR neatly above btnR.
+    //   extraL should not contain any text.
+    // * extraBox contains and aligns
+    //   extraL and extraR.
+    // * total aligns widgets for window.
+    // * hbButtons contains and aligns
+    //   btnL and btnR.
+
     SNote[] snote;
     int snCount;
     VBox total;
@@ -45,6 +60,7 @@ class Vidmot : Window
         btnR = new Button("Close Application");
         // Bound to 100 SNotes.
         snote = new SNote[100];
+        // Initially 0 SNotes stored in each run.
         snCount = 0;
         messagePass = new SNote(this);
         // Delete function widgets.
@@ -52,6 +68,7 @@ class Vidmot : Window
         extraL = new Label("");
         extraBox = new HBox();
 
+        // Load stored SNotes from previous run.
         Loader.readSNotes(this);
         snote = Loader.getSNotes();
         snCount = Loader.getSnCount();
@@ -70,6 +87,7 @@ class Vidmot : Window
         extraBox.Add(extraL);
         extraBox.Add(extraR);
 
+        // Set functions.
         btnL.Clicked += onBtnTnsLClicked;
         btnR.Clicked += onBtnTnsRClicked;
         extraR.Clicked += onBtnExtraRClicked;
@@ -86,7 +104,7 @@ class Vidmot : Window
         Add(total);
 
         // Set initial window size.
-        SetDefaultSize(300,400);
+        SetDefaultSize(400,500);
         ShowAll();
     }
 
@@ -110,6 +128,8 @@ class Vidmot : Window
         ShowAll();
     }
 
+    // Before: View is TNS. 
+    // After:  Application has closed.
     private void onBtnTnsRClicked(
             object source,
             EventArgs args)
@@ -118,6 +138,8 @@ class Vidmot : Window
         Application.Quit();
     }
 
+    // Before: View is TNS.
+    // After:  View is SNA.
     private void onBtnSnaLClicked(
             object source,
             EventArgs args)
@@ -140,6 +162,8 @@ class Vidmot : Window
         ShowAll();
     }
 
+    // Before: View is SNA.
+    // After:  View is TNS.
     private void onBtnSnaRClicked(
             object source,
             EventArgs args)
@@ -211,6 +235,10 @@ class Vidmot : Window
         ShowAll();
     }
 
+    // Before: View is SNA in change mode
+    //         for a selected SNote.
+    // After:  View is TNS and selected
+    //         SNote was deleted.
     private void onBtnExtraRClicked(
             object source,
             EventArgs args)
@@ -248,12 +276,20 @@ class Vidmot : Window
         return snote;
     }
 
+    // Before: View is oldView. If deleteButton is true, extraBox was
+    //         visible in last view or should be visible in next view.
+    // After:  View is newView. If deleteButton is true, extraBox has
+    //         been removed from view or added to view.
     private void updateView(HBox newView, HBox oldView, bool deleteButton)
     {
         total.Remove(oldView);
+        // Check if view was SNA in change mode and remove extraBox in
+        // next view if so.
         if(deleteButton && newView == tns) total.Remove(extraBox);
         total.Remove(hbButtons);
         total.PackStart(newView, true, true, 0);
+        // Check if next view should be SNA in change mode and add extraBox
+        // if so.
         if(deleteButton && newView == sna) total.PackStart(extraBox, false, false, 0);
         total.PackStart(hbButtons, false, false, 0);
     }
