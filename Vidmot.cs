@@ -106,6 +106,7 @@ class Vidmot : Window
         sna.setComment("");
         sna.setDate("");
         sna.setPrio("");
+        sna.setStatus(0);
         ShowAll();
     }
 

@@ -17,7 +17,6 @@ class Loader
         {
             if(snote[n].getInfo()[0] != "")
             {
-                Console.WriteLine("Writing snote: " + n);
                 string[] info = snote[n].getInfo();
                 int status = snote[n].getStatus();
                 table[i.ToString()] = info[0];
@@ -34,7 +33,6 @@ class Loader
             }
             else
             {
-                Console.WriteLine("Skipping snote: " + n);
                 n++;
             }
         }
